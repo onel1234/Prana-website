@@ -253,7 +253,7 @@ button {
 
 .navigation.navbar-dark .navbar-nav .nav-link {
      padding: 0px 27px;
-     color: #55236d;
+     color: #1a5c38;
      font-size: 17px;
      line-height: 20px;
 }
@@ -294,11 +294,12 @@ button {
      background: url(../images/banner_bottom_cross.png);
      background-repeat: no-repeat;
      background-size: 100% 100%;
+     display: none;
 }
 
 .banner_main {
      position: relative;
-     background: url(../images/banner.jpg);
+     background: linear-gradient(135deg, rgba(15, 61, 36, 0.92) 0%, rgba(26, 92, 56, 0.88) 50%, rgba(42, 122, 78, 0.85) 100%), url(../images/banner.jpg);
      background-repeat: no-repeat;
      min-height: 914px;
      background-size: 100% 100%;
@@ -321,7 +322,7 @@ button {
 }
 
 .text-bg h1 span {
-     color: #55236d;
+     color: #1a5c38;
 }
 
 .text-bg p {
@@ -355,7 +356,7 @@ button {
      width: 22px;
      height: 22px;
      border-radius: 20px;
-     background: #ffff00;
+     background: #d4c5a9;
 }
 
 .banner_Carousel .carousel-indicators li.active {
@@ -386,8 +387,8 @@ button {
 
 .read_more {
      font-size: 17px;
-     background-color: #ffa30f;
-     color: #fff;
+     background-color: #c8b78e;
+     color: #1a5c38;
      padding: 13px 0px;
      width: 100%;
      max-width: 190px;
@@ -396,12 +397,12 @@ button {
      transition: ease-in all 0.5s;
      z-index: 9999;
      position: relative;
-     font-weight: 300;
+     font-weight: 600;
 }
 
 .read_more:hover {
-     background: #4b1868;
-     color: #fff;
+     background: #1a5c38;
+     color: #f5f0e8;
      transition: ease-in all 0.5s;
 }
 
@@ -509,7 +510,7 @@ button {
 }
 
 .yellow {
-     color: #ffa50e;
+     color: #c8b78e;
 }
 
 .margin_top {
@@ -555,7 +556,7 @@ button {
      line-height: 18px;
      display: block;
      text-align: center;
-     border-bottom: #4a1667 solid 1px;
+     border-bottom: #1a5c38 solid 1px;
      width: 161px;
      margin: 0 auto;
      font-weight: 600;
@@ -584,11 +585,11 @@ button {
      width: 25px;
      height: 25px;
      border-radius: 20px;
-     background: #4a1667;
+     background: #1a5c38;
 }
 
 .testimonial_Carousel .carousel-indicators li.active {
-     background: #e5a124;
+     background: #c8b78e;
 }
 
 .carousel-control-next,
@@ -617,6 +618,7 @@ button {
      top: -334px;
      z-index: 9999;
      right: 154px;
+     display: none;
 }
 
 .footer::after {
@@ -629,11 +631,12 @@ button {
      top: -300px;
      left: 0;
      right: 0;
+     display: none;
 }
 
 .footer {
      position: relative;
-     background: #440e62;
+     background: #1a5c38;
      padding-top: 85px;
      text-align: center;
 }
@@ -680,8 +683,8 @@ button {
 .main_form .send_btn {
      font-size: 20px;
      transition: ease-in all 0.5s;
-     background-color: #ee3112;
-     color: #fff;
+     background-color: #1a5c38;
+     color: #f5f0e8;
      padding: 9px 0px;
      max-width: 190px;
      font-weight: 500;
@@ -696,9 +699,9 @@ button {
 }
 
 .main_form .send_btn:hover {
-     background-color: #e5a124;
+     background-color: #c8b78e;
      transition: ease-in all 0.5s;
-     color: #000;
+     color: #1a5c38;
 }
 
 #request *::placeholder {
@@ -730,12 +733,12 @@ ul.social_icon li a {
      font-size: 25px;
      border-radius: 30px;
      margin: 0 3px;
-     color: #440e62;
+     color: #1a5c38;
 }
 
 ul.social_icon li a:hover {
-     background-color: #f4cb1e;
-     color: #fff;
+     background-color: #c8b78e;
+     color: #1a5c38;
 }
 
 .bottom_form h3 {
@@ -768,7 +771,7 @@ ul.location_icon li a {
 }
 
 ul.location_icon li a:hover {
-     color: #e5a124;
+     color: #c8b78e;
 }
 
 .footer h3 {
@@ -781,7 +784,7 @@ ul.location_icon li a:hover {
 .copyright {
      margin-top: 30px;
      padding: 20px 0px;
-     background-color: #f4cb1e;
+     background-color: #c8b78e;
 }
 
 .copyright p {
@@ -803,7 +806,7 @@ ul.location_icon li a:hover {
 /** end footer **/
 
 .inner_page .header {
-     background-color: #e7a601;
+     background-color: #1a5c38;
      padding-bottom: 15px !important;
      position: inherit;
 }
@@ -828,3 +831,7 @@ ul.location_icon li a:hover {
      position: inherit;
 }
 
+/* Override Bootstrap text-warning to match new beige palette */
+.text-warning {
+     color: #c8b78e !important;
+}
