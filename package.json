@@ -1,0 +1,9 @@
+{
+  "name": "prana-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PRANA Functional Beverages website with order management",
+  "dependencies": {
+    "nodemailer": "^6.9.0"
+  }
+}

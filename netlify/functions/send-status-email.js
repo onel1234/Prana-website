@@ -1,5 +1,7 @@
-// Send status update email via Resend API
+// Send status update email via Gmail SMTP (Nodemailer)
 // Netlify Function: /.netlify/functions/send-status-email
+
+var nodemailer = require('nodemailer');
 
 exports.handler = async function(event) {
   // CORS headers
@@ -29,12 +31,12 @@ exports.handler = async function(event) {
       return { statusCode: 400, headers: headers, body: JSON.stringify({ error: 'Missing required fields' }) };
     }
 
-    var RESEND_API_KEY = process.env.RESEND_API_KEY;
-    var EMAIL_FROM = process.env.EMAIL_FROM || 'onboarding@resend.dev';
+    var GMAIL_USER = process.env.GMAIL_USER;
+    var GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
 
-    if (!RESEND_API_KEY) {
-      console.log('RESEND_API_KEY not set, skipping email');
-      return { statusCode: 200, headers: headers, body: JSON.stringify({ success: true, skipped: true, message: 'Email skipped - API key not configured' }) };
+    if (!GMAIL_USER || !GMAIL_APP_PASSWORD) {
+      console.log('Gmail credentials not set, skipping email');
+      return { statusCode: 200, headers: headers, body: JSON.stringify({ success: true, skipped: true, message: 'Email skipped - Gmail credentials not configured' }) };
     }
 
     // Status-specific content
@@ -108,36 +110,34 @@ exports.handler = async function(event) {
           itemsHtml +
         '</div>' +
         '<div style="text-align:center;margin-top:30px;">' +
-          '<p style="color:#999;font-size:13px;">© 2026 PRANA | Functional Beverages</p>' +
+          '<p style="color:#999;font-size:13px;">&copy; 2026 PRANA | Functional Beverages</p>' +
         '</div>' +
       '</div>' +
     '</body></html>';
 
-    var response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + RESEND_API_KEY,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        from: EMAIL_FROM,
-        to: [customerEmail],
-        subject: config.emoji + ' PRANA Order ' + orderNumber + ' - ' + config.title,
-        html: htmlEmail
-      })
+    // Create Gmail SMTP transporter
+    var transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: GMAIL_USER,
+        pass: GMAIL_APP_PASSWORD
+      }
     });
 
-    var result = await response.json();
+    // Send email
+    var info = await transporter.sendMail({
+      from: '"PRANA" <' + GMAIL_USER + '>',
+      to: customerEmail,
+      subject: config.emoji + ' PRANA Order ' + orderNumber + ' - ' + config.title,
+      html: htmlEmail
+    });
 
-    if (!response.ok) {
-      console.error('Resend error:', result);
-      return { statusCode: response.status, headers: headers, body: JSON.stringify({ error: 'Failed to send email', details: result }) };
-    }
+    console.log('Email sent:', info.messageId);
 
-    return { statusCode: 200, headers: headers, body: JSON.stringify({ success: true, emailId: result.id }) };
+    return { statusCode: 200, headers: headers, body: JSON.stringify({ success: true, messageId: info.messageId }) };
 
   } catch (err) {
     console.error('Function error:', err);
-    return { statusCode: 500, headers: headers, body: JSON.stringify({ error: 'Internal server error', message: err.message }) };
+    return { statusCode: 500, headers: headers, body: JSON.stringify({ error: 'Failed to send email', message: err.message }) };
   }
 };
