@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <title>Dashboard | PRANA Admin</title>
+   <meta name="robots" content="noindex, nofollow">
+   <link rel="icon" href="../images/prana_logo-removebg-preview.png" type="image/png">
+   <link rel="stylesheet" href="css/admin.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="dashboard">
+
+   <!-- Loading Overlay -->
+   <div class="loading-overlay" id="loadingOverlay">
+      <div class="loading-spinner"></div>
+   </div>
+
+   <!-- Toast Container -->
+   <div class="toast-container" id="toastContainer"></div>
+
+   <!-- Top Bar -->
+   <div class="topbar">
+      <div class="topbar-left">
+         <div class="topbar-logo">
+            <img src="../images/prana_logo-removebg-preview.png" alt="PRANA">
+         </div>
+         <span class="topbar-title">Order Management</span>
+         <span class="topbar-badge">Admin</span>
+      </div>
+      <div class="topbar-right">
+         <span class="topbar-user">
+            <i class="fa fa-user-circle" style="margin-right:6px;"></i>
+            <strong id="adminEmail">admin</strong>
+         </span>
+         <button class="btn-logout" onclick="logout()">
+            <i class="fa fa-sign-out" style="margin-right:5px;"></i> Logout
+         </button>
+      </div>
+   </div>
+
+   <!-- Tab Navigation -->
+   <div class="tab-nav">
+      <button class="tab-btn active" data-tab="orders" onclick="switchTab('orders')">
+         <i class="fa fa-shopping-bag" style="margin-right:8px;"></i> Orders
+      </button>
+      <button class="tab-btn" data-tab="users" onclick="switchTab('users')">
+         <i class="fa fa-users" style="margin-right:8px;"></i> Users
+      </button>
+   </div>
+
+   <!-- Orders Tab -->
+   <div class="tab-content active" id="tab-orders">
+
+      <!-- Stats -->
+      <div class="stats-grid">
+         <div class="stat-card total">
+            <div class="stat-value" id="statTotal">0</div>
+            <div class="stat-label">Total Orders</div>
+         </div>
+         <div class="stat-card pending">
+            <div class="stat-value" id="statPending">0</div>
+            <div class="stat-label">Pending</div>
+         </div>
+         <div class="stat-card processing">
+            <div class="stat-value" id="statProcessing">0</div>
+            <div class="stat-label">Processing</div>
+         </div>
+         <div class="stat-card shipped">
+            <div class="stat-value" id="statShipped">0</div>
+            <div class="stat-label">Shipped</div>
+         </div>
+         <div class="stat-card delivered">
+            <div class="stat-value" id="statDelivered">0</div>
+            <div class="stat-label">Delivered</div>
+         </div>
+         <div class="stat-card cancelled">
+            <div class="stat-value" id="statCancelled">0</div>
+            <div class="stat-label">Cancelled</div>
+         </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+         <input type="text" id="searchInput" placeholder="Search by name, email, or order number..." oninput="handleSearch()">
+         <select id="filterStatus" onchange="handleFilterChange()">
+            <option value="all">All Statuses</option>
+            <option value="Pending">Pending</option>
+            <option value="Processing">Processing</option>
+            <option value="Shipped">Shipped</option>
+            <option value="Delivered">Delivered</option>
+            <option value="Cancelled">Cancelled</option>
+         </select>
+      </div>
+
+      <!-- Orders Table -->
+      <div class="orders-table-wrapper">
+         <table class="orders-table">
+            <thead>
+               <tr>
+                  <th>Order ID</th>
+                  <th>Date</th>
+                  <th>Customer</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Items</th>
+                  <th>Total</th>
+                  <th>Status</th>
+               </tr>
+            </thead>
+            <tbody id="ordersBody">
+               <tr>
+                  <td colspan="8" class="empty-state">
+                     <i class="fa fa-spinner fa-spin"></i>
+                     <p>Loading orders...</p>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+      </div>
+   </div>
+
+   <!-- Users Tab -->
+   <div class="tab-content" id="tab-users">
+      <div class="users-section">
+         <div class="add-user-form">
+            <h3><i class="fa fa-user-plus" style="margin-right:10px;color:#c8b78e;"></i>Add Admin User</h3>
+            <form onsubmit="addAdminUser(event)">
+               <div class="form-row">
+                  <div class="form-group">
+                     <label for="newUserEmail">Email</label>
+                     <input type="email" id="newUserEmail" placeholder="newadmin@prana.com" required>
+                  </div>
+                  <div class="form-group">
+                     <label for="newUserPassword">Password</label>
+                     <input type="password" id="newUserPassword" placeholder="Min 6 characters" required minlength="6">
+                  </div>
+                  <button type="submit" class="btn-add-user" id="btnAddUser">
+                     <i class="fa fa-plus" style="margin-right:5px;"></i> Add User
+                  </button>
+               </div>
+            </form>
+         </div>
+
+         <div class="users-list">
+            <table>
+               <thead>
+                  <tr>
+                     <th>Email</th>
+                     <th>Created</th>
+                     <th>Status</th>
+                  </tr>
+               </thead>
+               <tbody id="usersBody">
+                  <tr>
+                     <td colspan="3" style="text-align:center;padding:30px;color:#7a8ca0;">
+                        <i class="fa fa-info-circle" style="margin-right:8px;"></i>
+                        Admin users are managed via the form above. See Supabase dashboard for full list.
+                     </td>
+                  </tr>
+               </tbody>
+            </table>
+         </div>
+      </div>
+   </div>
+
+   <!-- Scripts -->
+   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+   <script src="../js/supabase-config.js"></script>
+   <script src="../js/orders-api.js"></script>
+   <script src="js/admin.js"></script>
+   <script>
+      // Initialize dashboard
+      initDashboard().then(function() {
+         document.getElementById('loadingOverlay').style.display = 'none';
+      }).catch(function(err) {
+         console.error('Dashboard init error:', err);
+         document.getElementById('loadingOverlay').style.display = 'none';
+      });
+   </script>
+</body>
+</html>

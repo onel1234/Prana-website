@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <title>Checkout | PRANA Functional Beverages</title>
+   <meta name="description" content="Order PRANA biohacking juices and frozen packs for enhanced wellness.">
+   <link rel="stylesheet" href="css/bootstrap.min.css">
+   <link rel="stylesheet" href="css/style.css">
+   <link rel="stylesheet" href="css/checkout.css">
+   <link rel="icon" href="images/prana_logo-removebg-preview.png" type="image/png">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="checkout-page">
+
+   <!-- Header -->
+   <header>
+      <div class="header" style="position:relative; background:#fff; box-shadow:0 2px 15px rgba(0,0,0,0.06);">
+         <div class="container">
+            <div class="row">
+               <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col logo_section">
+                  <div class="full">
+                     <div class="center-desk">
+                        <div class="logo">
+                           <a href="index.html"><img src="images/prana_logo-removebg-preview.png" alt="PRANA" style="max-height:70px;"></a>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9 d-flex align-items-center justify-content-end">
+                  <a href="index.html" style="color:#1a5c38;font-weight:600;font-size:15px;">
+                     <i class="fa fa-arrow-left" style="margin-right:8px;"></i> Back to Home
+                  </a>
+               </div>
+            </div>
+         </div>
+      </div>
+   </header>
+
+   <!-- Step Indicator -->
+   <div class="step-indicator" style="margin-top:20px;">
+      <div class="step-item">
+         <div class="step-circle active" id="stepCircle1">1</div>
+         <span class="step-label active" id="stepLabel1">Products</span>
+      </div>
+      <div class="step-line" id="stepLine1"></div>
+      <div class="step-item">
+         <div class="step-circle" id="stepCircle2">2</div>
+         <span class="step-label" id="stepLabel2">Details</span>
+      </div>
+      <div class="step-line" id="stepLine2"></div>
+      <div class="step-item">
+         <div class="step-circle" id="stepCircle3">3</div>
+         <span class="step-label" id="stepLabel3">Review</span>
+      </div>
+   </div>
+
+   <div class="checkout-container">
+
+      <!-- Step 1: Product Selection -->
+      <div class="checkout-section active" id="step1">
+         <h2 class="section-title">Choose Your Products</h2>
+         <p class="section-subtitle">Select your bio-hacking juices and frozen packs</p>
+
+         <h3 class="category-header"><i class="fa fa-tint" style="margin-right:10px;color:#c8b78e;"></i>Juices</h3>
+         <div class="products-grid" id="juicesGrid"></div>
+
+         <h3 class="category-header"><i class="fa fa-snowflake-o" style="margin-right:10px;color:#c8b78e;"></i>Frozen Packs</h3>
+         <div class="products-grid" id="packsGrid"></div>
+
+         <div class="cart-summary-bar">
+            <div class="cart-info">
+               <i class="fa fa-shopping-cart" style="margin-right:10px;color:#c8b78e;font-size:20px;"></i>
+               <span id="cartItems">0 items</span> &bull;
+               Total: <strong id="cartTotal">Rs 0</strong>
+            </div>
+            <button class="btn-checkout" id="btnStep1Next" onclick="goToStep(2)" disabled>
+               Continue <i class="fa fa-arrow-right" style="margin-left:8px;"></i>
+            </button>
+         </div>
+      </div>
+
+      <!-- Step 2: Customer Details -->
+      <div class="checkout-section" id="step2">
+         <h2 class="section-title">Your Details</h2>
+         <p class="section-subtitle">Where should we deliver your order?</p>
+
+         <div class="checkout-form">
+            <div class="form-row">
+               <div class="form-group">
+                  <label for="customerName">Full Name *</label>
+                  <input type="text" id="customerName" placeholder="Enter your full name">
+                  <span class="error-text">Please enter your name</span>
+               </div>
+               <div class="form-group">
+                  <label for="customerEmail">Email Address *</label>
+                  <input type="email" id="customerEmail" placeholder="you@example.com">
+                  <span class="error-text">Please enter a valid email</span>
+               </div>
+            </div>
+            <div class="form-row">
+               <div class="form-group">
+                  <label for="customerPhone">Phone Number *</label>
+                  <input type="tel" id="customerPhone" placeholder="+94 77 123 4567">
+                  <span class="error-text">Please enter a valid phone number</span>
+               </div>
+               <div class="form-group">
+                  <label for="customerAddress">Delivery Address</label>
+                  <input type="text" id="customerAddress" placeholder="Street, City, Postal Code">
+               </div>
+            </div>
+
+            <div class="checkout-actions">
+               <button class="btn-outline" onclick="goToStep(1)">
+                  <i class="fa fa-arrow-left" style="margin-right:8px;"></i> Back
+               </button>
+               <button class="btn-checkout" onclick="goToStep(3)">
+                  Review Order <i class="fa fa-arrow-right" style="margin-left:8px;"></i>
+               </button>
+            </div>
+         </div>
+      </div>
+
+      <!-- Step 3: Order Summary -->
+      <div class="checkout-section" id="step3">
+         <h2 class="section-title">Review Your Order</h2>
+         <p class="section-subtitle">Please confirm everything looks correct</p>
+
+         <div class="order-summary-card">
+            <div class="summary-customer" id="summaryCustomer"></div>
+            <div class="summary-items" id="summaryItems"></div>
+            <div class="summary-total">
+               <span class="summary-total-label">Total</span>
+               <span class="summary-total-price" id="summaryTotalPrice">Rs 0</span>
+            </div>
+
+            <div class="checkout-actions">
+               <button class="btn-outline" onclick="goToStep(2)">
+                  <i class="fa fa-arrow-left" style="margin-right:8px;"></i> Back
+               </button>
+               <button class="btn-checkout btn-gold" id="btnPlaceOrder" onclick="placeOrder()">
+                  <i class="fa fa-check" style="margin-right:8px;"></i> Place Order
+               </button>
+            </div>
+         </div>
+      </div>
+
+      <!-- Success Screen -->
+      <div class="checkout-section" id="stepSuccess">
+         <div class="success-screen">
+            <div class="success-icon">
+               <i class="fa fa-check"></i>
+            </div>
+            <h2 class="success-title">Order Placed!</h2>
+            <p class="success-subtitle">Thank you for choosing PRANA. We'll prepare your order with care.</p>
+            <div class="success-order-number" id="successOrderNumber"></div>
+            <p style="color:#888;margin-bottom:30px;font-size:14px;">You'll receive email updates as your order progresses.</p>
+            <a href="index.html" class="btn-checkout" style="text-decoration:none;display:inline-block;">
+               <i class="fa fa-home" style="margin-right:8px;"></i> Back to Home
+            </a>
+         </div>
+      </div>
+
+   </div>
+
+   <!-- Scripts -->
+   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+   <script src="js/supabase-config.js"></script>
+   <script src="js/orders-api.js"></script>
+   <script src="js/checkout.js"></script>
+</body>
+</html>
