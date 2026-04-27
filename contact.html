@@ -159,63 +159,191 @@
    <!-- sidebar -->
    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
    <script src="js/custom.js"></script>
+   <!-- Toast Notification System -->
+   <style>
+      #toast-container {
+         position: fixed;
+         top: 30px;
+         right: 30px;
+         z-index: 99999;
+         display: flex;
+         flex-direction: column;
+         gap: 12px;
+         pointer-events: none;
+      }
+      .toast-msg {
+         pointer-events: auto;
+         min-width: 320px;
+         max-width: 450px;
+         padding: 16px 22px 16px 18px;
+         border-radius: 14px;
+         font-family: Arial, sans-serif;
+         font-size: 15px;
+         line-height: 1.5;
+         display: flex;
+         align-items: flex-start;
+         gap: 12px;
+         box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+         transform: translateX(120%);
+         opacity: 0;
+         transition: transform 0.4s cubic-bezier(.22,.68,0,1.1), opacity 0.4s ease;
+      }
+      .toast-msg.show { transform: translateX(0); opacity: 1; }
+      .toast-msg.hide { transform: translateX(120%); opacity: 0; }
+      .toast-msg.toast-success {
+         background: #f0fdf4;
+         border: 1px solid #86efac;
+         color: #15803d;
+      }
+      .toast-msg.toast-error {
+         background: #fef2f2;
+         border: 1px solid #fca5a5;
+         color: #b91c1c;
+      }
+      .toast-msg.toast-info {
+         background: #eff6ff;
+         border: 1px solid #93c5fd;
+         color: #1d4ed8;
+      }
+      .toast-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+      .toast-body { flex: 1; }
+      .toast-title { font-weight: 700; margin-bottom: 2px; }
+      .toast-detail { font-size: 13px; opacity: 0.85; }
+      .toast-close {
+         background: none; border: none; font-size: 18px; cursor: pointer;
+         color: inherit; opacity: 0.5; padding: 0; margin-left: 8px; flex-shrink: 0;
+      }
+      .toast-close:hover { opacity: 1; }
+      .toast-progress {
+         position: absolute; bottom: 0; left: 0; height: 3px;
+         border-radius: 0 0 14px 14px;
+         animation: toastTimer 5s linear forwards;
+      }
+      .toast-success .toast-progress { background: #22c55e; }
+      .toast-error .toast-progress { background: #ef4444; }
+      .toast-info .toast-progress { background: #3b82f6; }
+      @keyframes toastTimer { from { width: 100%; } to { width: 0%; } }
+   </style>
+   <div id="toast-container"></div>
+
    <!-- Contact Form Submission -->
    <script>
    (function() {
+      // ========== TOAST SYSTEM ==========
+      function showToast(type, title, detail, duration) {
+         duration = duration || 5000;
+         var container = document.getElementById('toast-container');
+         var icons = { success: '✅', error: '❌', info: 'ℹ️' };
+
+         var toast = document.createElement('div');
+         toast.className = 'toast-msg toast-' + type;
+         toast.style.position = 'relative';
+         toast.innerHTML =
+            '<span class="toast-icon">' + (icons[type] || '') + '</span>' +
+            '<div class="toast-body">' +
+               '<div class="toast-title">' + title + '</div>' +
+               (detail ? '<div class="toast-detail">' + detail + '</div>' : '') +
+            '</div>' +
+            '<button class="toast-close" onclick="this.parentElement.classList.replace(\'show\',\'hide\');setTimeout(function(){this.remove()}.bind(this.parentElement),400)">&times;</button>' +
+            '<div class="toast-progress"></div>';
+
+         container.appendChild(toast);
+         requestAnimationFrame(function() {
+            requestAnimationFrame(function() { toast.classList.add('show'); });
+         });
+         setTimeout(function() {
+            toast.classList.replace('show', 'hide');
+            setTimeout(function() { if (toast.parentElement) toast.remove(); }, 400);
+         }, duration);
+      }
+
+      // ========== FORM HANDLER ==========
       var form = document.getElementById('contact-form');
       var btn = document.getElementById('send-btn');
       var statusDiv = document.getElementById('form-status');
 
-      function showStatus(message, isSuccess) {
-         statusDiv.textContent = message;
-         statusDiv.style.display = 'block';
-         statusDiv.style.background = isSuccess ? '#e8f5e9' : '#fdecea';
-         statusDiv.style.color = isSuccess ? '#1a5c38' : '#c0392b';
-         statusDiv.style.border = '1px solid ' + (isSuccess ? '#a5d6a7' : '#f5c6cb');
-      }
+      if (!form) { console.error('[ContactForm] Form #contact-form not found in DOM'); return; }
+      if (!btn) { console.error('[ContactForm] Button #send-btn not found in DOM'); return; }
+      console.log('[ContactForm] ✅ Form initialized successfully');
 
       form.addEventListener('submit', function(e) {
          e.preventDefault();
-         statusDiv.style.display = 'none';
+         if (statusDiv) statusDiv.style.display = 'none';
 
          var fullName = document.getElementById('fullName').value.trim();
          var email = document.getElementById('email').value.trim();
          var phone = document.getElementById('phone').value.trim();
          var message = document.getElementById('message').value.trim();
 
+         console.log('[ContactForm] 📝 Form submitted with:', { fullName: fullName, email: email, phone: phone, messageLength: message.length });
+
          if (!fullName || !email || !message) {
-            showStatus('Please fill in your name, email, and message.', false);
+            console.warn('[ContactForm] ⚠️ Validation failed — missing required fields');
+            showToast('error', 'Missing Fields', 'Please fill in your name, email, and message.');
             return;
          }
 
          btn.disabled = true;
          btn.textContent = 'Sending...';
+         console.log('[ContactForm] 📡 Sending request to /.netlify/functions/send-contact-email ...');
+
+         var payload = { fullName: fullName, email: email, phone: phone, message: message };
+         var startTime = Date.now();
 
          fetch('/.netlify/functions/send-contact-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-               fullName: fullName,
-               email: email,
-               phone: phone,
-               message: message
-            })
+            body: JSON.stringify(payload)
          })
-         .then(function(res) { return res.json(); })
+         .then(function(res) {
+            var elapsed = Date.now() - startTime;
+            console.log('[ContactForm] 📨 Response in ' + elapsed + 'ms — Status: ' + res.status + ' ' + res.statusText);
+
+            if (!res.ok) {
+               console.error('[ContactForm] ❌ HTTP error — Status: ' + res.status);
+            }
+
+            return res.text().then(function(text) {
+               console.log('[ContactForm] 📄 Raw response body:', text);
+               try {
+                  return JSON.parse(text);
+               } catch (parseErr) {
+                  console.error('[ContactForm] ❌ Failed to parse JSON:', parseErr.message);
+                  throw new Error('Invalid JSON response. Status: ' + res.status + '. Body: ' + text.substring(0, 200));
+               }
+            });
+         })
          .then(function(data) {
+            console.log('[ContactForm] 📦 Parsed response:', data);
+
             if (data.success) {
-               showStatus('✅ Your message has been sent successfully! We\'ll get back to you soon.', true);
+               console.log('[ContactForm] ✅ Email sent! MessageId:', data.messageId);
+               showToast('success', 'Message Sent!', 'Your message has been delivered to PRANA. We\'ll get back to you soon.');
                form.reset();
             } else {
-               showStatus('❌ ' + (data.error || 'Something went wrong. Please try again.'), false);
+               var errMsg = data.error || data.message || 'Unknown server error';
+               console.error('[ContactForm] ❌ Server error:', errMsg);
+               showToast('error', 'Failed to Send', errMsg);
             }
          })
-         .catch(function() {
-            showStatus('❌ Network error. Please check your connection and try again.', false);
+         .catch(function(err) {
+            console.error('[ContactForm] ❌ Fetch error:', err);
+            console.error('[ContactForm] Stack:', err.stack || 'N/A');
+
+            var userMsg = 'Network error — please check your connection.';
+            if (err.message) {
+               if (err.message.indexOf('invalid JSON') !== -1 || err.message.indexOf('Invalid JSON') !== -1) {
+                  userMsg = 'Server returned an unexpected response. Check the browser console (F12) for details.';
+               } else if (err.message.indexOf('Failed to fetch') !== -1) {
+                  userMsg = 'Could not reach the server. Are you viewing this locally? The contact form only works on the deployed Netlify site.';
+               }
+            }
+            showToast('error', 'Connection Error', userMsg, 8000);
          })
          .finally(function() {
             btn.disabled = false;
             btn.textContent = 'Send';
+            console.log('[ContactForm] 🔄 Button re-enabled');
          });
       });
    })();

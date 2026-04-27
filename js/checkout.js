@@ -6,11 +6,11 @@
 // Product catalog
 var PRODUCTS = {
   juices: [
-    { id: 'fiber-fuel', name: 'Fiber Fuel', subtitle: 'Gut Health & Prebiotic Juice', price: 400, image: 'images/our1.png' },
-    { id: 'zen-fuel', name: 'Zen Fuel', subtitle: 'Anti-Stress Adaptogen Juice', price: 600, image: 'images/our2.png' },
-    { id: 'golden-calm', name: 'Golden Calm', subtitle: 'Anti-Inflammatory Golden Elixir', price: 550, image: 'images/our3.png' },
-    { id: 'liver-lift', name: 'Liver Lift', subtitle: 'Detox & Liver Support Juice', price: 600, image: 'images/our4.png' },
-    { id: 'mind-fuel', name: 'Mind Fuel', subtitle: 'Brain Boost Green Juice', price: 550, image: 'images/our5.png' }
+    { id: 'fiber-fuel', name: 'Fiber Fuel', subtitle: 'Gut Health & Prebiotic Juice', price: 400, image: 'images/fiber-fuel-removebg-preview.png' },
+    { id: 'zen-fuel', name: 'Zen Fuel', subtitle: 'Anti-Stress Adaptogen Juice', price: 600, image: 'images/ZenFuel-removebg-preview.png', imgStyle: 'max-height: 90px;' },
+    { id: 'golden-calm', name: 'Golden Calm', subtitle: 'Anti-Inflammatory Golden Elixir', price: 550, image: 'images/GoldenCalm-removebg-preview.png' },
+    { id: 'liver-lift', name: 'Liver Lift', subtitle: 'Detox & Liver Support Juice', price: 600, image: 'images/LiverLift-removebg-preview.png' },
+    { id: 'mind-fuel', name: 'Mind Fuel', subtitle: 'Brain Boost Green Juice', price: 550, image: 'images/mind_fuel-removebg-preview.png' }
   ],
   frozenPacks: [
     { id: 'gut-health-pack', name: 'Gut Health Pack', subtitle: 'Supports digestion & gut balance', price: 300, icon: 'fa-leaf' },
@@ -53,8 +53,9 @@ function renderProducts() {
 }
 
 function createProductCardHTML(product, hasImage) {
+  var styleAttr = product.imgStyle ? ' style="' + product.imgStyle + '"' : '';
   var imgHTML = hasImage
-    ? '<img class="product-img" src="' + product.image + '" alt="' + product.name + '">'
+    ? '<img class="product-img" src="' + product.image + '" alt="' + product.name + '"' + styleAttr + '>'
     : '<div class="product-icon"><i class="fa ' + product.icon + '"></i></div>';
 
   return '<div class="product-card" id="card-' + product.id + '" onclick="toggleProduct(\'' + product.id + '\')">' +
