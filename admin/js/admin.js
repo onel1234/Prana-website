@@ -112,6 +112,8 @@ async function loadStats() {
 
 // ======================== ORDERS TABLE ========================
 
+var ordersCache = {};
+
 async function loadOrders() {
   var statusFilter = document.getElementById('filterStatus');
   var searchInput = document.getElementById('searchInput');
@@ -138,6 +140,12 @@ function renderOrdersTable(orders) {
     return;
   }
 
+  // Cache orders for status change handler
+  ordersCache = {};
+  orders.forEach(function(order) {
+    ordersCache[order.id] = order;
+  });
+
   var html = '';
   orders.forEach(function(order) {
     var date = new Date(order.created_at);
@@ -151,8 +159,6 @@ function renderOrdersTable(orders) {
       });
     }
 
-    var statusClass = order.status.toLowerCase();
-
     html += '<tr>' +
       '<td><span class="order-number">' + order.order_number + '</span></td>' +
       '<td>' + dateStr + '<br><small style="color:#7a8ca0">' + timeStr + '</small></td>' +
@@ -162,7 +168,7 @@ function renderOrdersTable(orders) {
       '<td><span class="order-items-list">' + itemsHtml + '</span></td>' +
       '<td><span class="order-total">Rs ' + order.total + '</span></td>' +
       '<td>' +
-        '<select class="status-select" onchange="handleStatusChange(\'' + order.id + '\', this.value, \'' + order.status + '\', ' + JSON.stringify(JSON.stringify(order)) + ')" data-order-id="' + order.id + '">' +
+        '<select class="status-select" onchange="handleStatusChange(\'' + order.id + '\', this.value)" data-order-id="' + order.id + '">' +
           buildStatusOptions(order.status) +
         '</select>' +
       '</td>' +
@@ -181,12 +187,17 @@ function buildStatusOptions(current) {
   return html;
 }
 
-async function handleStatusChange(orderId, newStatus, oldStatus, orderJson) {
+async function handleStatusChange(orderId, newStatus) {
+  var order = ordersCache[orderId];
+  if (!order) {
+    showToast('Order not found', 'error');
+    return;
+  }
+
+  var oldStatus = order.status;
   if (newStatus === oldStatus) return;
 
   try {
-    var order = JSON.parse(orderJson);
-
     // Update in database
     await OrdersAPI.updateOrderStatus(orderId, newStatus, oldStatus, adminEmail);
     showToast('Status updated to ' + newStatus, 'success');
