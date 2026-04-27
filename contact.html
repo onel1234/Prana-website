@@ -62,9 +62,7 @@
                      </button>
                      <div class="collapse navbar-collapse" id="navbarsExample04">
                         <ul class="navbar-nav mr-auto">
-                           <li class="nav-item ">
-                              <a class="nav-link" href="index.html"> Home </a>
-                           </li>
+                           
                            <li class="nav-item">
                               <a class="nav-link" href="about.html">About</a>
                            </li>
@@ -101,16 +99,16 @@
                   </div>
                </div>
                <div class="col-md-10 offset-md-1">
-                  <form id="request" class="main_form">
+                  <form id="contact-form" class="main_form">
                      <div class="row">
                         <div class="col-md-12 ">
-                           <input class="contactus" placeholder="Full Name" type="type" name="Full Name">
+                           <input class="contactus" placeholder="Full Name" type="text" name="fullName" id="fullName" required>
                         </div>
                         <div class="col-md-7">
-                           <input class="contactus" placeholder="Email" type="type" name="Email">
+                           <input class="contactus" placeholder="Email" type="email" name="email" id="email" required>
                         </div>
                         <div class="col-md-7">
-                           <input class="contactus" placeholder="Phone Number" type="type" name="Phone Number">
+                           <input class="contactus" placeholder="Phone Number" type="tel" name="phone" id="phone">
                         </div>
                         <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12">
                            <ul class="social_icon">
@@ -122,11 +120,11 @@
                            </ul>
                         </div>
                         <div class="col-md-12">
-                           <textarea class="contactus1" placeholder="Message" type="type"
-                              Message="Name">Message </textarea>
+                           <textarea class="contactus1" placeholder="Your message..." name="message" id="message" required></textarea>
                         </div>
                         <div class="col-md-12">
-                           <button class="send_btn">Send</button>
+                           <div id="form-status" style="margin-bottom: 15px; padding: 12px 20px; border-radius: 8px; display: none; font-size: 15px; text-align: center;"></div>
+                           <button type="submit" class="send_btn" id="send-btn">Send</button>
                         </div>
                      </div>
                   </form>
@@ -161,6 +159,67 @@
    <!-- sidebar -->
    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
    <script src="js/custom.js"></script>
+   <!-- Contact Form Submission -->
+   <script>
+   (function() {
+      var form = document.getElementById('contact-form');
+      var btn = document.getElementById('send-btn');
+      var statusDiv = document.getElementById('form-status');
+
+      function showStatus(message, isSuccess) {
+         statusDiv.textContent = message;
+         statusDiv.style.display = 'block';
+         statusDiv.style.background = isSuccess ? '#e8f5e9' : '#fdecea';
+         statusDiv.style.color = isSuccess ? '#1a5c38' : '#c0392b';
+         statusDiv.style.border = '1px solid ' + (isSuccess ? '#a5d6a7' : '#f5c6cb');
+      }
+
+      form.addEventListener('submit', function(e) {
+         e.preventDefault();
+         statusDiv.style.display = 'none';
+
+         var fullName = document.getElementById('fullName').value.trim();
+         var email = document.getElementById('email').value.trim();
+         var phone = document.getElementById('phone').value.trim();
+         var message = document.getElementById('message').value.trim();
+
+         if (!fullName || !email || !message) {
+            showStatus('Please fill in your name, email, and message.', false);
+            return;
+         }
+
+         btn.disabled = true;
+         btn.textContent = 'Sending...';
+
+         fetch('/.netlify/functions/send-contact-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+               fullName: fullName,
+               email: email,
+               phone: phone,
+               message: message
+            })
+         })
+         .then(function(res) { return res.json(); })
+         .then(function(data) {
+            if (data.success) {
+               showStatus('✅ Your message has been sent successfully! We\'ll get back to you soon.', true);
+               form.reset();
+            } else {
+               showStatus('❌ ' + (data.error || 'Something went wrong. Please try again.'), false);
+            }
+         })
+         .catch(function() {
+            showStatus('❌ Network error. Please check your connection and try again.', false);
+         })
+         .finally(function() {
+            btn.disabled = false;
+            btn.textContent = 'Send';
+         });
+      });
+   })();
+   </script>
 </body>
 
 </html>

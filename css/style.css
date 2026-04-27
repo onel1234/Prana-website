@@ -253,7 +253,7 @@ button {
 
 .navigation.navbar-dark .navbar-nav .nav-link {
      padding: 0px 27px;
-     color: #1a5c38;
+     color: #fff;
      font-size: 17px;
      line-height: 20px;
 }
@@ -322,7 +322,7 @@ button {
 }
 
 .text-bg h1 span {
-     color: #1a5c38;
+     color: #c8b78e;
 }
 
 .text-bg p {
